@@ -1,0 +1,17 @@
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = Mitnal
+  FILE_GUID                      = 09e58811-3de4-4cd7-b849-de8ef654c9b4
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = UefiMain
+
+[Sources]
+  Main.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiApplicationEntryPoint

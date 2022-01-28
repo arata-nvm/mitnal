@@ -1,0 +1,5 @@
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = MitnalPkg
+  PACKAGE_GUID                   = 09e58811-3de4-4cd7-b849-de8ef654c9b4
+  PACKAGE_VERSION                = 0.1
