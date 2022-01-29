@@ -15,3 +15,7 @@
 [LibraryClasses]
   UefiLib
   UefiApplicationEntryPoint
+
+[Protocols]
+  gEfiHttpServiceBindingProtocolGuid
+  gEfiHttpProtocolGuid
