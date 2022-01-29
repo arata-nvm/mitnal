@@ -9,4 +9,5 @@ run:
 	qemu-system-x86_64 \
 		-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \
 		-drive if=pflash,format=raw,file=./OVMF_VARS.fd \
-		-drive if=ide,file=fat:rw:image,index=0,media=disk
+		-drive if=ide,file=fat:rw:image,index=0,media=disk \
+		-fw_cfg name=etc/edk2/https/cacerts,file=./certdb

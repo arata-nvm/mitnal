@@ -72,7 +72,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
 
   EFI_HTTP_REQUEST_DATA RequestData;
   RequestData.Method = HttpMethodGet;
-  RequestData.Url = L"http://jsonplaceholder.typicode.com/posts/1";
+  RequestData.Url = L"https://jsonplaceholder.typicode.com/posts/1";
 
   EFI_HTTP_HEADER RequestHeader;
   RequestHeader.FieldName = "Host";
