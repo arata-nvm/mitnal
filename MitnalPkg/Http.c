@@ -1,5 +1,6 @@
 #include "Http.h"
 #include "Common.h"
+#include "Console.h"
 #include <Library/BaseMemoryLib.h>
 #include <Protocol/Http.h>
 #include <Protocol/ServiceBinding.h>

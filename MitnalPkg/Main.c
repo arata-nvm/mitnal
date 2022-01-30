@@ -1,35 +1,19 @@
 #include "Common.h"
+#include "Console.h"
+#include "Graphics.h"
 #include "Http.h"
 #include "Twitter.h"
 #include <Uefi.h>
 
-EFI_STATUS Maximize(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *ConOut) {
-  EFI_STATUS Status;
+char *efontUTF8toUTF16(uint16_t *pUTF16, char *pUTF8);
 
-  UINTN MaxMode = 0, MaxColumns = 0, MaxRows = 0;
-  UINTN Columns, Rows;
-
-  Print(L"%d, %d\n", ConOut->Mode->Mode, ConOut->Mode->MaxMode);
-  for (UINTN i = 0; i < ConOut->Mode->MaxMode; i++) {
-    Status = ConOut->QueryMode(ConOut, i, &Columns, &Rows);
-    if (Status != EFI_SUCCESS) {
-      continue;
-    }
-
-    if (Columns > MaxColumns) {
-      MaxColumns = Columns;
-      MaxMode = i;
-    }
-    if (Rows > MaxRows) {
-      MaxRows = Rows;
-      MaxMode = i;
-    }
+VOID UTF8toUTF16(OUT CHAR16 *pUTF16, IN CHAR8 *pUTF8) {
+  UINTN i = 0;
+  CHAR8 *ptr = pUTF8;
+  while (*ptr != 0) {
+    ptr = efontUTF8toUTF16(&pUTF16[i], ptr);
+    i++;
   }
-
-  Status = ConOut->SetMode(ConOut, MaxMode);
-  HANDLE_ERROR(Status)
-
-  return EFI_SUCCESS;
 }
 
 EFI_STATUS PostTweet(IN CHAR16 *Content) {
@@ -58,8 +42,18 @@ EFI_STATUS ShowTimeline() {
   Status = HomeTimeline(Tweets, &TweetCount);
   HANDLE_ERROR(Status)
 
+  CHAR16 CreatedAt[256];
+  CHAR16 UserName[256];
+  CHAR16 Text[256];
   for (UINTN i = TweetCount - 1; i != 0; i--) {
-    Print(L"[%a] <%a> %a\n", Tweets[i].CreatedAt, Tweets[i].UserName, Tweets[i].Text);
+    ZeroMem(CreatedAt, sizeof(CreatedAt));
+    ZeroMem(UserName, sizeof(UserName));
+    ZeroMem(Text, sizeof(Text));
+    UTF8toUTF16(CreatedAt, (CHAR8 *)Tweets[i].CreatedAt);
+    UTF8toUTF16(UserName, (CHAR8 *)Tweets[i].UserName);
+    UTF8toUTF16(Text, (CHAR8 *)Tweets[i].Text);
+
+    PrintUtf16(L"[%s] <%s> %s\n", CreatedAt, UserName, Text);
   }
 
   gBS->FreePool(Tweets);
@@ -77,7 +71,7 @@ EFI_STATUS ExecuteCommand(IN CHAR16 *Command) {
     if (!StrCmp(Command, L"tweet")) {
       return PostTweet(Arg);
     } else {
-      Print(L"command not found\n");
+      PrintUtf16(L"command not found\n");
     }
   }
 
@@ -91,12 +85,17 @@ VOID ReadLine(IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ConIn, OUT CHAR16 *Buffer, IN U
     while (ConIn->ReadKeyStroke(ConIn, &Key) != EFI_SUCCESS)
       ;
 
-    Print(L"%c", Key.UnicodeChar);
     if (Key.UnicodeChar == L'\r') {
-      Print(L"\n");
+      PrintUtf16(L"\n");
       break;
+    } else if (Key.UnicodeChar == L'\b') {
+      if (i == 0) {
+        continue;
+      }
+      i--;
     }
 
+    PrintUtf16(L"%c", Key.UnicodeChar);
     Buffer[i] = Key.UnicodeChar;
   }
   Buffer[i] = 0;
@@ -105,15 +104,18 @@ VOID ReadLine(IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ConIn, OUT CHAR16 *Buffer, IN U
 EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
   EFI_STATUS Status;
 
-  Status = Maximize(SystemTable->ConOut);
-  HANDLE_ERROR(Status);
+  Status = InitGraphics(ImageHandle);
+  HANDLE_ERROR(Status)
+
+  Status = InitConsole();
+  HANDLE_ERROR(Status)
 
   Status = InitHttpProtocol();
   HANDLE_ERROR(Status)
 
   CHAR16 Buffer[256];
   while (TRUE) {
-    Print(L"> ");
+    PrintUtf16(L"> ");
     ReadLine(SystemTable->ConIn, Buffer, sizeof(Buffer));
     ExecuteCommand(Buffer);
   }

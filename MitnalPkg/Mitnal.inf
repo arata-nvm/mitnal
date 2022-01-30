@@ -8,6 +8,8 @@
 
 [Sources]
   Common.c
+  Console.c
+  Graphics.c
   Http.c
   Main.c
   OAuth.c

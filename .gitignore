@@ -4,5 +4,6 @@
 /MitnalPkg/hmac
 /MitnalPkg/sha
 /MitnalPkg/json.h
+/MitnalPkg/font
 OVMF*
 certdb

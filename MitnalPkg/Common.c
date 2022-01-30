@@ -38,6 +38,10 @@ VOID memcpy(VOID *Dst, const VOID *Src, UINTN Len) {
   CopyMem(Dst, Src, Len);
 }
 
+VOID memset(VOID *Dst, const UINT8 Value, UINTN Len) {
+  SetMem(Dst, Len, Value);
+}
+
 uintmax_t
 strtoumax(const char *nptr, char **endptr, int base) {
   return 0;
