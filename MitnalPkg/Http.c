@@ -86,8 +86,16 @@ EFI_STATUS SendRequest(IN HTTP_REQUEST_CONTEXT *Context) {
   return EFI_SUCCESS;
 }
 
-EFI_STATUS ReceiveResponse(OUT UINT8 *Buffer, IN UINTN BufferSize) {
+EFI_STATUS ReceiveResponse(OUT UINT8 *Buffer, IN OUT UINTN *BufferSize) {
   EFI_STATUS Status;
+
+  UINT8 *TempBuffer;
+  Status = gBS->AllocatePool(
+      EfiBootServicesData,
+      0x10000,
+      (VOID **)&TempBuffer);
+  HANDLE_ERROR(Status);
+  ZeroMem(TempBuffer, sizeof(TempBuffer));
 
   EFI_HTTP_RESPONSE_DATA ResponseData;
   ResponseData.StatusCode = HTTP_STATUS_UNSUPPORTED_STATUS;
@@ -96,8 +104,8 @@ EFI_STATUS ReceiveResponse(OUT UINT8 *Buffer, IN UINTN BufferSize) {
   ResponseMessage.Data.Response = &ResponseData;
   ResponseMessage.HeaderCount = 0;
   ResponseMessage.Headers = NULL;
-  ResponseMessage.BodyLength = BufferSize;
-  ResponseMessage.Body = Buffer;
+  ResponseMessage.BodyLength = sizeof(TempBuffer);
+  ResponseMessage.Body = TempBuffer;
 
   EFI_HTTP_TOKEN ResponseToken;
   ResponseToken.Event = NULL;
@@ -116,6 +124,36 @@ EFI_STATUS ReceiveResponse(OUT UINT8 *Buffer, IN UINTN BufferSize) {
   HANDLE_ERROR(Status)
   while (!gResponseCallbackComplete)
     ;
+
+  for (UINTN i = 0; i < ResponseMessage.HeaderCount; i++) {
+    if (!AsciiStrCmp(ResponseMessage.Headers[i].FieldName, "content-length")) {
+      *BufferSize = AsciiStrDecimalToUintn(ResponseMessage.Headers[i].FieldValue);
+    }
+  }
+
+  UINTN ContentDownloaded = ResponseMessage.BodyLength;
+  CopyMem(Buffer, TempBuffer, ResponseMessage.BodyLength);
+
+  while (ContentDownloaded < *BufferSize) {
+    ResponseMessage.Data.Response = NULL;
+    if (ResponseMessage.Headers != NULL) {
+      gBS->FreePool(ResponseMessage.Headers);
+    }
+    ResponseMessage.HeaderCount = 0;
+    ResponseMessage.BodyLength = sizeof(TempBuffer);
+    ZeroMem(TempBuffer, sizeof(TempBuffer));
+
+    gResponseCallbackComplete = FALSE;
+    Status = gHttpProtocol->Response(gHttpProtocol, &ResponseToken);
+    HANDLE_ERROR(Status)
+    while (!gResponseCallbackComplete)
+      ;
+
+    CopyMem(Buffer + ContentDownloaded, TempBuffer, ResponseMessage.BodyLength);
+    ContentDownloaded += ResponseMessage.BodyLength;
+  }
+
+  gBS->FreePool(TempBuffer);
 
   return EFI_SUCCESS;
 }

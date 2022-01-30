@@ -21,7 +21,5 @@
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
 
-  OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLib.inf
-
 [Components]
   MitnalPkg/Mitnal.inf

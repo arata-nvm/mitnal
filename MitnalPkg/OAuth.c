@@ -27,10 +27,18 @@ EFI_STATUS GenerateSignature(IN CHAR8 *Method, IN CHAR8 *Url, IN CHAR8 *Query, O
 
   AsciiSPrint(Key, sizeof(Key), "%a&%a", gConsumerSecret, gAccessTokenSecret);
 
-  AsciiSPrint(
-      Param, sizeof(Param),
-      "oauth_consumer_key=%a&oauth_nonce=%a&oauth_signature_method=HMAC-SHA1&oauth_timestamp=%d&oauth_token=%a&oauth_version=1.0&%a",
-      gConsumerKey, gNonce, gTimestamp, gAccessToken, Query);
+  if (Query == NULL) {
+    AsciiSPrint(
+        Param, sizeof(Param),
+        "oauth_consumer_key=%a&oauth_nonce=%a&oauth_signature_method=HMAC-SHA1&oauth_timestamp=%d&oauth_token=%a&oauth_version=1.0",
+        gConsumerKey, gNonce, gTimestamp, gAccessToken);
+  } else {
+    AsciiSPrint(
+        Param, sizeof(Param),
+        "oauth_consumer_key=%a&oauth_nonce=%a&oauth_signature_method=HMAC-SHA1&oauth_timestamp=%d&oauth_token=%a&oauth_version=1.0&%a",
+        gConsumerKey, gNonce, gTimestamp, gAccessToken, Query);
+  }
+
   UrlEncode(Url, UrlEnc);
   UrlEncode(Param, ParamEnc);
   AsciiSPrint(Base, sizeof(Base), "%a&%a&%a", Method, UrlEnc, ParamEnc);

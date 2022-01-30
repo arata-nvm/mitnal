@@ -10,7 +10,6 @@ run:
 	cp ./edk2/Build/Shell/DEBUG_CLANG38/X64/ShellPkg/Application/Shell/Shell/DEBUG/Shell.efi ./image/EFI/BOOT/BOOTX64.efi
 	cp ./edk2/Build/MitnalX64/DEBUG_CLANG38/X64/Mitnal.efi ./image/EFI/BOOT
 	qemu-system-x86_64 \
-		-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \
-		-drive if=pflash,format=raw,file=./OVMF_VARS.fd \
-		-drive if=ide,file=fat:rw:image,index=0,media=disk \
+		-bios ./OVMF.fd \
+		-drive if=ide,format=raw,file=fat:rw:image,index=0,media=disk \
 		-fw_cfg name=etc/edk2/https/cacerts,file=./certdb

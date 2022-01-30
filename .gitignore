@@ -3,5 +3,6 @@
 /MitnalPkg/Secrets
 /MitnalPkg/hmac
 /MitnalPkg/sha
+/MitnalPkg/json.h
 OVMF*
 certdb

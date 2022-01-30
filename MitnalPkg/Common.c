@@ -20,3 +20,25 @@ void UrlEncode(CHAR8 *Str, CHAR8 *StrEnc) {
   }
   *ptr = 0;
 }
+
+VOID *malloc(UINTN Size) {
+  VOID *Buffer;
+  gBS->AllocatePool(
+      EfiBootServicesData,
+      Size,
+      (VOID **)&Buffer);
+  return Buffer;
+}
+
+VOID free(VOID *Buffer) {
+  gBS->FreePool(Buffer);
+}
+
+VOID memcpy(VOID *Dst, const VOID *Src, UINTN Len) {
+  CopyMem(Dst, Src, Len);
+}
+
+uintmax_t
+strtoumax(const char *nptr, char **endptr, int base) {
+  return 0;
+}
