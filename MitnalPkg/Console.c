@@ -20,7 +20,7 @@ EFI_STATUS InitConsole() {
       EfiBootServicesData,
       gMaxColumn * gMaxRow,
       (VOID **)&gBuffer);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
   ZeroMem(gBuffer, gMaxColumn * gMaxRow);
 
   return EFI_SUCCESS;

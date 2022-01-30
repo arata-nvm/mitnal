@@ -40,18 +40,18 @@ EFI_STATUS Tweet(IN CHAR8 *Message) {
   Context.Body = NULL;
 
   Status = SendRequest(&Context);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   UINT8 *Buffer;
   Status = gBS->AllocatePool(
       EfiBootServicesData,
       BUFFER_SIZE,
       (VOID **)&Buffer);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   UINTN BufferSize = BUFFER_SIZE;
   Status = ReceiveResponse(Buffer, &BufferSize);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   gBS->FreePool(Buffer);
 
@@ -117,18 +117,18 @@ EFI_STATUS HomeTimeline(OUT TWEET *Tweets, OUT UINTN *TweetCount) {
   Context.Body = NULL;
 
   Status = SendRequest(&Context);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   UINT8 *Buffer;
   Status = gBS->AllocatePool(
       EfiBootServicesData,
       BUFFER_SIZE,
       (VOID **)&Buffer);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   UINTN BufferSize = BUFFER_SIZE;
   Status = ReceiveResponse(Buffer, &BufferSize);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
 
   ParseTweets(Buffer, BufferSize, Tweets, TweetCount);
 

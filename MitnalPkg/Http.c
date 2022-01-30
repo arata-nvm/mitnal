@@ -95,7 +95,7 @@ EFI_STATUS ReceiveResponse(OUT UINT8 *Buffer, IN OUT UINTN *BufferSize) {
       EfiBootServicesData,
       0x10000,
       (VOID **)&TempBuffer);
-  HANDLE_ERROR(Status);
+  HANDLE_ERROR(Status)
   ZeroMem(TempBuffer, sizeof(TempBuffer));
 
   EFI_HTTP_RESPONSE_DATA ResponseData;
