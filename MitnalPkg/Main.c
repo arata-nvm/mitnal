@@ -64,6 +64,8 @@ EFI_STATUS ShowTimeline() {
 EFI_STATUS ExecuteCommand(IN CHAR16 *Command) {
   if (!StrCmp(Command, L"home")) {
     return ShowTimeline();
+  } else if (!StrCmp(Command, L"exit")) {
+    return EFI_ABORTED;
   } else {
     CHAR16 *Arg = StrStr(Command, L" ") + 1;
     *(Arg - 1) = 0;
@@ -117,7 +119,8 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
   while (TRUE) {
     PrintUtf16(L"> ");
     ReadLine(SystemTable->ConIn, Buffer, sizeof(Buffer));
-    ExecuteCommand(Buffer);
+    Status = ExecuteCommand(Buffer);
+    HANDLE_ERROR(Status)
   }
 
   return EFI_SUCCESS;
