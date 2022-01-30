@@ -7,7 +7,13 @@
   ENTRY_POINT                    = UefiMain
 
 [Sources]
+  Common.c
+  Http.c
   Main.c
+  OAuth.c
+  Twitter.c
+  hmac/hmac_sha1.c
+  sha/sha1.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -19,3 +25,4 @@
 [Protocols]
   gEfiHttpServiceBindingProtocolGuid
   gEfiHttpProtocolGuid
+  gEfiTimestampProtocolGuid

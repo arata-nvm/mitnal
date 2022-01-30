@@ -1,4 +1,7 @@
 /edk2
 /image
+/MitnalPkg/Secrets
+/MitnalPkg/hmac
+/MitnalPkg/sha
 OVMF*
 certdb
