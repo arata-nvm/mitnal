@@ -32,16 +32,19 @@ EFI_STATUS Maximize(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *ConOut) {
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
+EFI_STATUS PostTweet(IN CHAR16 *Content) {
   EFI_STATUS Status;
+  CHAR8 Content8[256];
 
-  Status = Maximize(SystemTable->ConOut);
-  HANDLE_ERROR(Status);
-
-  Status = InitHttpProtocol();
+  UnicodeStrToAsciiStrS(Content, Content8, sizeof(Content8));
+  Status = Tweet(Content8);
   HANDLE_ERROR(Status)
 
-  // Status = Tweet("Hello from UEFI Application.");
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS ShowTimeline() {
+  EFI_STATUS Status;
 
   TWEET *Tweets;
   Status = gBS->AllocatePool(
@@ -55,13 +58,65 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
   Status = HomeTimeline(Tweets, &TweetCount);
   HANDLE_ERROR(Status)
 
-  Print(L"%d tweets fetched.\n", TweetCount);
-
-  for (UINTN i = 0; i < TweetCount; i++) {
+  for (UINTN i = TweetCount - 1; i != 0; i--) {
     Print(L"[%a] <%a> %a\n", Tweets[i].CreatedAt, Tweets[i].UserName, Tweets[i].Text);
   }
 
   gBS->FreePool(Tweets);
+
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS ExecuteCommand(IN CHAR16 *Command) {
+  if (!StrCmp(Command, L"home")) {
+    return ShowTimeline();
+  } else {
+    CHAR16 *Arg = StrStr(Command, L" ") + 1;
+    *(Arg - 1) = 0;
+
+    if (!StrCmp(Command, L"tweet")) {
+      return PostTweet(Arg);
+    } else {
+      Print(L"command not found\n");
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+VOID ReadLine(IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ConIn, OUT CHAR16 *Buffer, IN UINTN BufferSize) {
+  UINTN i;
+  for (i = 0; i < BufferSize - 1; i++) {
+    EFI_INPUT_KEY Key;
+    while (ConIn->ReadKeyStroke(ConIn, &Key) != EFI_SUCCESS)
+      ;
+
+    Print(L"%c", Key.UnicodeChar);
+    if (Key.UnicodeChar == L'\r') {
+      Print(L"\n");
+      break;
+    }
+
+    Buffer[i] = Key.UnicodeChar;
+  }
+  Buffer[i] = 0;
+}
+
+EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
+  EFI_STATUS Status;
+
+  Status = Maximize(SystemTable->ConOut);
+  HANDLE_ERROR(Status);
+
+  Status = InitHttpProtocol();
+  HANDLE_ERROR(Status)
+
+  CHAR16 Buffer[256];
+  while (TRUE) {
+    Print(L"> ");
+    ReadLine(SystemTable->ConIn, Buffer, sizeof(Buffer));
+    ExecuteCommand(Buffer);
+  }
 
   return EFI_SUCCESS;
 }
