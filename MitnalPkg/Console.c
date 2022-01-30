@@ -13,7 +13,7 @@ static CHAR16 *gBuffer;
 EFI_STATUS InitConsole() {
   EFI_STATUS Status;
 
-  gMaxColumn = gHorizontalResolution / FONT_SIZE;
+  gMaxColumn = gHorizontalResolution / FONT_SIZE_HALF - 1;
   gMaxRow = gVerticalResolution / FONT_SIZE;
 
   Status = gBS->AllocatePool(
@@ -26,21 +26,24 @@ EFI_STATUS InitConsole() {
   return EFI_SUCCESS;
 }
 
-// static BOOLEAN IsHalfWidth(CHAR16 Char) {
-//   return Char <= 0xff;
-// }
+static BOOLEAN IsHalfWidth(CHAR16 Char) {
+  return Char <= 0xff;
+}
 
 static VOID Scroll() {
   for (UINTN y = 0; y < gMaxRow - 1; y++) {
     for (UINTN x = 0; x < gMaxColumn; x++) {
       gBuffer[x + y * gMaxColumn] = gBuffer[x + (y + 1) * gMaxColumn];
-      DrawChar(x * FONT_SIZE, y * FONT_SIZE, gBuffer[x + y * gMaxColumn]);
+      DrawChar(x * FONT_SIZE_HALF, y * FONT_SIZE, gBuffer[x + y * gMaxColumn]);
+      if (!IsHalfWidth(gBuffer[x + y * gMaxColumn])) {
+        x++;
+      }
     }
   }
 
   for (UINTN x = 0; x < gMaxColumn; x++) {
     gBuffer[x + (gMaxRow - 1) * gMaxColumn] = 0;
-    DrawChar(x * FONT_SIZE, (gMaxRow - 1) * FONT_SIZE, L' ');
+    DrawChar(x * FONT_SIZE_HALF, (gMaxRow - 1) * FONT_SIZE, L' ');
   }
 }
 
@@ -57,8 +60,12 @@ static VOID PrintChar(CHAR16 Char) {
     gRow++;
   } else {
     gBuffer[gColumn + gRow * gMaxColumn] = Char;
-    DrawChar(gColumn * FONT_SIZE, gRow * FONT_SIZE, gBuffer[gColumn + gRow * gMaxColumn]);
-    gColumn++;
+    DrawChar(gColumn * FONT_SIZE_HALF, gRow * FONT_SIZE, gBuffer[gColumn + gRow * gMaxColumn]);
+    if (IsHalfWidth(Char)) {
+      gColumn++;
+    } else {
+      gColumn += 2;
+    }
   }
 
   if (gColumn == gMaxColumn) {
