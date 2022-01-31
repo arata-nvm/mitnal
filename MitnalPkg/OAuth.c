@@ -7,6 +7,10 @@
 
 #include "Secrets"
 
+// fake value
+static const CHAR8 *gNonce = "JtB6znKJNVo";
+static const UINT64 gTimestamp = 1643528823;
+
 EFI_STATUS HmacSha1(IN CHAR8 *Key, IN CHAR8 *Data, OUT CHAR8 *Result, OUT UINTN *ResultSize) {
   UINTN DigestSize;
   CHAR8 ResultRaw[256];
