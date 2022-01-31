@@ -2,6 +2,7 @@
 #include "Console.h"
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiLib.h>
+#include <stdint.h>
 
 #define HANDLE_ERROR(status)                                         \
   if (EFI_ERROR(status)) {                                           \
@@ -16,11 +17,6 @@ typedef BOOLEAN boolean;
 typedef BOOLEAN bool;
 #endif
 typedef CHAR8 byte;
-typedef UINTN size_t;
-typedef UINT8 uint8_t;
-typedef UINT16 uint16_t;
-typedef INT16 int16_t;
-typedef UINT64 uintmax_t;
 
 // TODO
 typedef __builtin_va_list VA_LIST2;

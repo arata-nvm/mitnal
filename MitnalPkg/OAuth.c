@@ -11,7 +11,7 @@ EFI_STATUS HmacSha1(IN CHAR8 *Key, IN CHAR8 *Data, OUT CHAR8 *Result, OUT UINTN 
   UINTN DigestSize;
   CHAR8 ResultRaw[256];
 
-  hmac_sha1((UINT8 *)Key, AsciiStrLen(Key), (UINT8 *)Data, AsciiStrLen(Data), (UINT8 *)ResultRaw, &DigestSize);
+  hmac_sha1((UINT8 *)Key, AsciiStrLen(Key), (UINT8 *)Data, AsciiStrLen(Data), (UINT8 *)ResultRaw, (size_t *)&DigestSize);
   Base64Encode((UINT8 *)ResultRaw, DigestSize, Result, ResultSize);
 
   return EFI_SUCCESS;
