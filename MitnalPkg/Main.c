@@ -5,13 +5,13 @@
 #include "Twitter.h"
 #include <Uefi.h>
 
-char *efontUTF8toUTF16(uint16_t *pUTF16, char *pUTF8);
+char *efontUFT8toUTF16(uint16_t *pUTF16, char *pUTF8);
 
 VOID UTF8toUTF16(OUT CHAR16 *pUTF16, IN CHAR8 *pUTF8) {
   UINTN i = 0;
   CHAR8 *ptr = pUTF8;
   while (*ptr != 0) {
-    ptr = efontUTF8toUTF16(&pUTF16[i], ptr);
+    ptr = efontUFT8toUTF16(&pUTF16[i], ptr);
     i++;
   }
 }
