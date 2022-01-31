@@ -69,7 +69,6 @@ void ParseTweets(IN UINT8 *Buffer, IN UINTN BufferSize, OUT TWEET *Tweets, OUT U
       if (!AsciiStrCmp(oe->name->string, "created_at")) {
         CHAR8 *CreatedAt = (CHAR8 *)json_value_as_string(json_extract_value(oe->value))->string;
 
-        // TODO
         CreatedAt = CreatedAt + 4;
         CreatedAt[12] = 0;
 

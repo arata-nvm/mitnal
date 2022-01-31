@@ -12,16 +12,11 @@
 
 #define false (0 != 0)
 
-typedef BOOLEAN boolean;
 #ifndef __cplusplus
 typedef BOOLEAN bool;
 #endif
+typedef BOOLEAN boolean;
 typedef CHAR8 byte;
-
-// TODO
-typedef __builtin_va_list VA_LIST2;
-#define VA_START2(Marker, Parameter) __builtin_va_start(Marker, Parameter)
-#define VA_END2(Marker) __builtin_va_end(Marker)
 
 extern EFI_BOOT_SERVICES *gBS;
 
