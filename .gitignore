@@ -1,5 +1,6 @@
 /edk2
 /image
+/dist
 /MitnalPkg/Secrets
 /MitnalPkg/hmac
 /MitnalPkg/sha
