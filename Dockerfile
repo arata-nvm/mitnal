@@ -9,7 +9,7 @@ RUN git clone --recursive https://github.com/tianocore/edk2.git \
   && make -C BaseTools/Source/C
 
 RUN sed -i 's/DEFINE NETWORK_TLS_ENABLE             = FALSE/DEFINE NETWORK_TLS_ENABLE             = TRUE/' edk2/OvmfPkg/OvmfPkgX64.dsc \
-  && sed -i 's/EFINE NETWORK_HTTP_BOOT_ENABLE       = FALSE/EFINE NETWORK_HTTP_BOOT_ENABLE       = TRUE/' edk2/OvmfPkg/OvmfPkgX64.dsc
+  && sed -i 's/DEFINE NETWORK_HTTP_BOOT_ENABLE       = FALSE/DEFINE NETWORK_HTTP_BOOT_ENABLE       = TRUE/' edk2/OvmfPkg/OvmfPkgX64.dsc
 
 RUN cd edk2 && bash -c 'source edksetup.sh && build -a X64 -b RELEASE -t CLANG38 -p OvmfPkg/OvmfPkgX64.dsc'
 

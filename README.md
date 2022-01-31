@@ -30,7 +30,7 @@ $ make run
 
 ## Usage
 
-Here is a list of available command:
+Here is a list of available commands:
 
 - `home`: show your timeline
 - `tweet hello`:  tweet 'hello'
